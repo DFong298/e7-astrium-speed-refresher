@@ -3,14 +3,14 @@ import threading
 import tkinter as tk
 from PIL import Image
 
-from main import run_stat_refresher
+from main import PROFILES, run_stat_refresher
 
 
 def launch_gui():
     """Create a minimal GUI launcher for the stat refresher."""
     root = tk.Tk()
     root.title('Stat Refresher Launcher')
-    root.geometry('320x200')
+    root.geometry('320x240')
     root.resizable(False, False)
 
     asset_dir = os.path.join(os.path.dirname(__file__), 'assets')
@@ -49,19 +49,31 @@ def launch_gui():
     info = tk.Label(root, text='Click start to run the refresher.\nPress ESC to stop.', justify=tk.CENTER)
     info.pack(pady=8)
 
+    profile_var = tk.StringVar(root)
+    profile_var.set(next(iter(PROFILES)))
+    profile_menu = tk.OptionMenu(root, profile_var, *PROFILES.keys())
+    profile_menu.config(width=24)
+    profile_menu.pack(pady=4)
+
     status_label = tk.Label(root, text='Ready', fg='green')
     status_label.pack(pady=8)
 
     def on_start():
         status_label.config(text='Running...', fg='orange')
         start_button.config(state=tk.DISABLED)
+        profile_menu.config(state=tk.DISABLED)
 
         def status_callback(text, color):
             status_label.config(text=text, fg=color)
-            if text in ('Stopped', 'Success!'):
+            if text in ('Stopped', 'Success: 5 found'):
                 start_button.config(state=tk.NORMAL)
+                profile_menu.config(state=tk.NORMAL)
 
-        refresher_thread = threading.Thread(target=run_stat_refresher, args=(status_callback,), daemon=True)
+        refresher_thread = threading.Thread(
+            target=run_stat_refresher,
+            args=(profile_var.get(), status_callback),
+            daemon=True,
+        )
         refresher_thread.start()
 
     start_button = tk.Button(root, text='Start Refresh', width=20, command=on_start)

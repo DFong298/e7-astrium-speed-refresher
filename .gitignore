@@ -1,0 +1,36 @@
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.env
+.venv/
+ENV/
+env/
+
+# Debug output and local artifacts
+debug/
+*.log
+
+# PyInstaller / build artifacts
+build/
+dist/
+*.spec
+*.egg-info/
+
+# Testing
+.pytest_cache/
+.coverage
+coverage.xml
+
+# IDE/editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db

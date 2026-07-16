@@ -15,9 +15,8 @@ This is an app made to automatically refresh astral forge in search of 5 speed. 
 
 **Step 6.** Touch grass until you run out of astral forge points or hit a 5 speeder
 
+## Running Locally
+If you want to use the program locally instead of just using the .exe, you will need to install and configure Tesseract yourself.
+
 ## Future Updates
 **Support For Emulator(s)**: MuMuPlayer support will be added soon. Not sure about the others
-
-**Better UI**: The app currently looks like it wants your credit card info
-
-**Setting Number of Refreshes** App currently just keeps clicking until it sees 5 speed. In future, you will be able to designate how many astral forge points you want to spend

@@ -1,5 +1,6 @@
-keyboard
-pyautogui
-pytesseract
-Pillow
-pygetwindow
+keyboard==0.13.5
+pyautogui==0.9.54
+pytesseract==0.3.13
+Pillow==12.2.0
+pygetwindow==0.0.9
+customtkinter==6.0.0

@@ -17,8 +17,6 @@ except ImportError:
     print('Warning: pygetwindow not installed. Window auto-move will be skipped.')
 
 # --- CONFIGURATION ---
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-
 WINDOW_POSITION = (0, 0)
 WINDOW_SIZE = (1280, 720)
 PAUSE_BETWEEN_ACTIONS = 1.5
@@ -28,7 +26,7 @@ OCR_SCALE = 3
 TESSERACT_DIR = os.path.join(os.path.dirname(__file__), 'tesseract')
 
 PROFILES = {
-    'Epic Seven (Native)': {
+    'Epic Seven': {
         'window_title': 'Epic Seven',
         'focus_coord': (475, 560),
         'refresh_coord': (500, 665),
@@ -149,7 +147,7 @@ def ocr_region_best_number(image):
     return best[0] if best else ''
 
 
-def run_stat_refresher(profile_name, status_callback=None):
+def run_stat_refresher(profile_name, status_callback=None, max_iterations=None):
     """Move the window, focus it, and run a simple OCR scan loop."""
 
     def update_status(text, color='black'):
@@ -184,8 +182,16 @@ def run_stat_refresher(profile_name, status_callback=None):
     move_window_to_top_left(target_window)
     focus_game_window(target_window, profile['focus_coord'])
 
+    iterations = 0
+    reported_result = False
     try:
         while not stop_event.is_set():
+            if max_iterations is not None and iterations >= max_iterations:
+                print(f'Reached iteration limit ({max_iterations}). Stopping.')
+                update_status('Stopped: Points used', 'red')
+                reported_result = True
+                break
+
             pyautogui.click(*profile['refresh_coord'])
             time.sleep(PAUSE_BETWEEN_ACTIONS)
 
@@ -216,10 +222,12 @@ def run_stat_refresher(profile_name, status_callback=None):
                         pass
 
             print('Scanned values:', values)
+            iterations += 1
 
             if any(v == '5' for v in values):
                 print('Found 5! Stopping.')
                 update_status('Success: 5 found', 'green')
+                reported_result = True
                 break
 
             time.sleep(0.1)
@@ -230,10 +238,10 @@ def run_stat_refresher(profile_name, status_callback=None):
             except Exception:
                 pass
         stop_event.set()
-        if status_callback:
+        if status_callback and not reported_result:
             status_callback('Stopped', 'red')
         print('Refresher stopped.')
 
 
 if __name__ == '__main__':
-    run_stat_refresher('Epic Seven (Native)')
+    run_stat_refresher('Epic Seven')
